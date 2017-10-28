@@ -112,6 +112,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // MKDirectionsを生成してRequestをセット.
         let myDirections: MKDirections = MKDirections(request: myRequest)
         // 経路探索.
+        // ルートは1つのみ
+        if self.myMapView.overlays.count != 0 {
+            self.myMapView.removeOverlays(self.myMapView.overlays)
+        }
         myDirections.calculate { (response, error) in
             if error != nil || response!.routes.isEmpty {
                 return
