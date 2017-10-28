@@ -266,7 +266,7 @@ extension ViewController: CLLocationManagerDelegate {
         self.currentLat = locations.first!.coordinate.latitude
         self.currentLon = locations.first!.coordinate.longitude
         setMap(lat: currentLat, lon: currentLon)
-        myMapView.userTrackingMode = .followWithHeading
+        
     }
     
     // 観測領域に入った際に呼ばれるメソッド.
@@ -275,8 +275,13 @@ extension ViewController: CLLocationManagerDelegate {
         stepCounter += 1
         if stepCounter < steps.count {
             let currentStep = steps[stepCounter]
-            let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
-            print(message)
+            var isRight: Bool
+            if currentStep.instructions.contains("右") {
+                isRight = true
+            } else if currentStep.instructions.contains("左") {
+                isRight = false
+            } else { return }
+            myLocationManager.startUpdatingLocation()
         } else {
             // 目的地に到達した時に表示.
             // アラートを作成.
