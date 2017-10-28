@@ -89,6 +89,10 @@ class ViewController: UIViewController {
     }
     
     func createRoute() {
+        // ルートは1つのみ
+        if self.myMapView.overlays.count != 0 {
+            self.myMapView.removeOverlays(self.myMapView.overlays)
+        }
         // 地図の中心を出発点と目的地の中間に設定.
         let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake((currentLat + destinationLat)/2, (currentLon + destinationLon)/2)
         myMapView.setCenter(center, animated: true)
@@ -129,25 +133,30 @@ class ViewController: UIViewController {
         // MKDirectionsを生成してRequestをセット.
         let myDirections: MKDirections = MKDirections(request: myRequest)
         // 経路探索.
-        // ルートは1つのみ
-        if self.myMapView.overlays.count != 0 {
-            self.myMapView.removeOverlays(self.myMapView.overlays)
-        }
         myDirections.calculate { (response, error) in
             if error != nil || response!.routes.isEmpty {
                 return
             }
             let route: MKRoute = response!.routes[0] as MKRoute
+            // 観測停止.
+            self.myLocationManager.monitoredRegions.forEach({
+                self.myLocationManager.stopMonitoring(for: $0)
+            })
             // 曲がり角ごとに情報を取得.
             self.steps = route.steps
-            // はじめの曲がり角の情報を取得する.
-            let firstStep = route.steps[0]
-            print("\(firstStep.distance)m")
-            print("\(firstStep.instructions)")
             for i in 0 ..< route.steps.count {
                 let step = route.steps[i]
                 print("\(step.distance)m")
                 print("\(step.instructions)")
+                // 観測領域を生成.
+                let region = CLCircularRegion(center: step.polyline.coordinate,
+                                              radius: 20,
+                                              identifier: "\(i)")
+                // 観測開始.
+                self.myLocationManager.startMonitoring(for: region)
+                let circle = MKCircle(center: region.center, radius: region.radius)
+                // 観測領域を描画
+                self.myMapView.add(circle)
             }
             // mapViewにルートを描画.
             self.myMapView.add(route.polyline)
@@ -214,13 +223,25 @@ extension ViewController: MKMapViewDelegate {
     
     // ルートの表示設定.
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        let route: MKPolyline = overlay as! MKPolyline
-        let routeRenderer: MKPolylineRenderer = MKPolylineRenderer(polyline: route)
-        // ルートの線の太さ.
-        routeRenderer.lineWidth = 3.0
-        // ルートの線の色.
-        routeRenderer.strokeColor = UIColor.red
-        return routeRenderer
+        // 経路の線.
+        if overlay is MKPolyline {
+            let route: MKPolyline = overlay as! MKPolyline
+            let routeRenderer: MKPolylineRenderer = MKPolylineRenderer(polyline: route)
+            // ルートの線の太さ.
+            routeRenderer.lineWidth = 3.0
+            // ルートの線の色.
+            routeRenderer.strokeColor = UIColor.red
+            return routeRenderer
+        }
+        // 曲がり角の円.
+        if overlay is MKCircle {
+            let renderer = MKCircleRenderer(overlay: overlay)
+            renderer.strokeColor = .red
+            renderer.fillColor = .red
+            renderer.alpha = 0.5
+            return renderer
+        }
+        return MKOverlayRenderer()
     }
     
 }
@@ -245,9 +266,10 @@ extension ViewController: CLLocationManagerDelegate {
         self.currentLat = locations.first!.coordinate.latitude
         self.currentLon = locations.first!.coordinate.longitude
         setMap(lat: currentLat, lon: currentLon)
-        self.myMapView.userTrackingMode = .followWithHeading
+        myMapView.userTrackingMode = .followWithHeading
     }
     
+    // 観測領域に入った際に呼ばれるメソッド.
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("Entered route")
         stepCounter += 1
@@ -256,19 +278,24 @@ extension ViewController: CLLocationManagerDelegate {
             let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
             print(message)
         } else {
-            // 目的地に到達した時.
-            let message = "Arrived at destination"
-            print(message)
+            // 目的地に到達した時に表示.
+            // アラートを作成.
+            let alert = UIAlertController(title:"到着！", message: "目的地に到着しました", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true, completion: nil)
+            
+            // 一度リセット.
             stepCounter = 0
-            // stop monitoring
             myLocationManager.monitoredRegions.forEach(
                 { self.myLocationManager.stopMonitoring(for: $0) }
             )
-            // annotations
+            
+            // 表示していたアノテーション,overlayなども消す.
             self.myMapView.removeAnnotations(myMapView.annotations)
+            self.myMapView.removeOverlays(myMapView.overlays)
+            
         }
     }
-    
     
 }
 
