@@ -120,7 +120,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake((currentLat + destinationLat)/2, (currentLon + destinationLon)/2)
         myMapView.setCenter(center, animated: true)
         // 縮尺を指定.
-        let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+        // 現在地と目的地を含む矩形を計算
+        let maxLat:Double = fmax(currentLat, destinationLat)
+        let maxLon:Double = fmax(currentLon, destinationLon)
+        let minLat:Double = fmin(currentLat, destinationLat)
+        let minLon:Double = fmin(currentLon, destinationLon)
+        // 地図表示するときの緯度、経度の幅を計算
+        let mapMargin:Double = 1.5
+        let leastCoordSpan:Double = 0.005
+        let span_x:Double = fmax(leastCoordSpan, fabs(maxLat - minLat) * mapMargin);
+        let span_y:Double = fmax(leastCoordSpan, fabs(maxLon - minLon) * mapMargin);
+        let mySpan:MKCoordinateSpan = MKCoordinateSpanMake(span_x, span_y);
         let myRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, span: mySpan)
         // regionをmapViewにセット.
         myMapView.region = myRegion
@@ -279,3 +289,4 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
 }
+
