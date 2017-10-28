@@ -8,12 +8,17 @@
 import UIKit
 import MapKit
 import CoreLocation
+import GooglePlaces
 
-class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UISearchBarDelegate, LocateOnTheMap {
     
     // MapView.
     var myMapView : MKMapView!
     var myLocationManager: CLLocationManager!
+    
+    // Search results
+    var searchResultController: SearchResultsController!
+    var resultsArray = [String]()
     
     // current location
     var currentLat: CLLocationDegrees = CLLocationDegrees()
@@ -26,6 +31,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLocationManager()
+        searchResultController = SearchResultsController()
+        searchResultController.delegate = self
     }
     
     
@@ -196,4 +203,32 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         routeRenderer.strokeColor = UIColor.red
         return routeRenderer
     }
+    
+    @IBAction func tapSearchAddressBtn(_ sender: Any) {
+        let searchController = UISearchController(searchResultsController: searchResultController)
+        searchController.searchBar.delegate = self
+        self.present(searchController, animated:true, completion: nil)
+    }
+    
+    func locateWithLongitude(_ lon: Double, resultLat lat: Double, resultTitle title: String) {
+        DispatchQueue.main.async { () -> Void in
+            self.setMap(lat: lat, lon: lon)
+        }
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let placeClient = GMSPlacesClient()
+        placeClient.autocompleteQuery(searchText, bounds: nil, filter: nil) { (results, error: Error?) -> Void in
+            print("Error @%",Error.self)
+            self.resultsArray.removeAll()
+            if results == nil { return }
+            for result in results! {
+                if let result = result as? GMSAutocompletePrediction {
+                    self.resultsArray.append(result.attributedFullText.string)
+                }
+            }
+            self.searchResultController.reloadDataWithArray(self.resultsArray)
+        }
+    }
+    
 }
