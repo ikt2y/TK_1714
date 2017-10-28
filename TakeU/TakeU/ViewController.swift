@@ -20,6 +20,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var searchResultController: SearchResultsController!
     var resultsArray = [String]()
     
+    // turn by turn navigation info
+    var steps = [MKRouteStep]()
+    var stepCounter = 0
+    
     // current location
     var currentLat: CLLocationDegrees = CLLocationDegrees()
     var currentLon: CLLocationDegrees = CLLocationDegrees()
@@ -75,6 +79,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // MapViewの生成&表示.
         myMapView = MKMapView()
         myMapView.showsUserLocation = true
+        myMapView.userTrackingMode = .followWithHeading
         myMapView.frame = self.view.bounds
         myMapView.delegate = self
         // Regionを作成.
@@ -105,6 +110,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // Itemを生成してPlaceMarkをセット.
         let fromItem: MKMapItem = MKMapItem(placemark: fromPlace)
         let toItem: MKMapItem = MKMapItem(placemark: toPlace)
+        
         // MKDirectionsRequestを生成.
         let myRequest: MKDirectionsRequest = MKDirectionsRequest()
         // 出発地のItemをセット.
@@ -127,9 +133,18 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 return
             }
             let route: MKRoute = response!.routes[0] as MKRoute
+            // 曲がり角ごとに情報を取得.
+            self.steps = route.steps
+            for i in 0 ..< route.steps.count {
+                let step = route.steps[i]
+                print(step.instructions)
+                print(step.distance)
+            }
+            
             // mapViewにルートを描画.
             self.myMapView.add(route.polyline)
         }
+        
         self.view.addSubview(myMapView)
     }
     
