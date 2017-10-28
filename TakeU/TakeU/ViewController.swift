@@ -17,6 +17,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var myLocationManager: CLLocationManager!
     var currentLat: Double = Double()
     var currentLon: Double = Double()
+    var destinationLat: Double = Double()
+    var destinationLon: Double = Double()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +110,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         destinationPin.coordinate = myCoordinate
         destinationPin.title = "タイトル"
         destinationPin.subtitle = "サブタイトル"
+        // 目的地の緯度経度を設定
+        self.destinationLat = destinationPin.coordinate.latitude
+        self.destinationLon = destinationPin.coordinate.longitude
         // MapViewにピンを追加.
         myMapView.addAnnotation(destinationPin)
     }
