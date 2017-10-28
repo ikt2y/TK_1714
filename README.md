@@ -3,10 +3,8 @@
 
 [![TakeU](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
 
-
-
 ## 製品概要
-### 自転車×Tech
+### 歩きスマホ×Tech
 
 ### 背景（製品開発のきっかけ、課題等）
 #### プロダクトの開発に至った背景
@@ -51,27 +49,26 @@
 - 方向音痴でも直感的に歩くことができる
 
 ### 今後の展望
-三叉路の対応
-ネックレス型のプロダクトをスタイリッシュにする
-Androidアプリの開発
-(記録を保存して写真やメモなどを思い出を残せるようにしたい)
+- 三叉路の対応
+- ネックレス型のプロダクトをスタイリッシュにする
+- Androidアプリの開発
+- 地図のモード切り替え(徒歩・自転車)
 
 ## 開発内容・開発技術
 ### 活用した技術
 #### API・データ
-今回スポンサーから提供されたAPI、製品などの外部技術があれば記述をして下さい。
 
-* Google Maps API
-* Google Places API
-* Google Direction API
+- Google Places API
+- 固有表現抽出API (NTTレゾナント株式会社様より提供)
 
 #### フレームワーク・ライブラリ・モジュール
 * iOS: Swift
-* [Mapbox](https://www.mapbox.com/navigation-sdk/)
-
+    * MapKit
+    * CoreLocation
+    * Speech Framework
+    
 #### デバイス
 * iPhone
-*
 
 ### 研究内容・事前開発プロダクト（任意）
 ご自身やチームの研究内容や、事前に持ち込みをしたプロダクトがある場合は、こちらに実績なども含め記載をして下さい。
@@ -88,7 +85,7 @@ Androidアプリの開発
 
 ---
 
-### 参考文献
+## 参考文献
 [1]一般社団法人電気通信事業者協会(2017)「『やめましょう、歩きスマホ。』に関する調査」(URL:http://www.tca.or.jp/press_release/pdf/170308sumahochosa.pdf)<参照2017-10-28>
 [2]株式会社ゼンリン(2017)「地図利用実態調査」(URL:http://www.zenrin.co.jp/dl/pdf/material06.pdf)<参照2017-10-28>
 [3]NHK(2017)「ハワイ ホノルルで「歩きスマホ」禁止条例施行 | NHKニュース」(URL:http://www3.nhk.or.jp/news/html/20171026/k10011198601000.html)<参照2017-10-28>
