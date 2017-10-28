@@ -10,7 +10,7 @@ import MapKit
 import CoreLocation
 import GooglePlaces
 
-class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UISearchBarDelegate, LocateOnTheMap {
+class ViewController: UIViewController {
     
     // MapView.
     var myMapView : MKMapView!
@@ -39,6 +39,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         searchResultController.delegate = self
     }
     
+    @objc func update() {
+        myLocationManager.startUpdatingLocation()
+    }
     
     func setupLocationManager() {
         // LocationManagerの生成&設定.
@@ -57,36 +60,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
         myLocationManager.startUpdatingLocation()
     }
-    
-    // GPSから値を取得した際に呼び出されるメソッド.
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        //　Get current location info
-        self.currentLat = locations.first!.coordinate.latitude
-        self.currentLon = locations.first!.coordinate.longitude
-        setMap(lat: self.currentLat, lon: self.currentLon)
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("Entered route")
-        stepCounter += 1
-        if stepCounter < steps.count {
-            let currentStep = steps[stepCounter]
-            let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
-            print(message)
-        } else {
-            // 目的地に到達した時.
-            let message = "Arrived at destination"
-            print(message)
-            stepCounter = 0
-            // stop monitoring
-            myLocationManager.monitoredRegions.forEach(
-                { self.myLocationManager.stopMonitoring(for: $0) }
-            )
-            // annotations
-            self.myMapView.removeAnnotations(myMapView.annotations)
-        }
-    }
-    
+
     func setMap(lat: Double, lon: Double) {
         // 中心点の緯度経度.
         let myLat: CLLocationDegrees = lat
@@ -100,7 +74,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // MapViewの生成&表示.
         myMapView = MKMapView()
         myMapView.showsUserLocation = true
-        myMapView.userTrackingMode = .followWithHeading
         myMapView.frame = self.view.bounds
         myMapView.delegate = self
         
@@ -167,35 +140,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let route: MKRoute = response!.routes[0] as MKRoute
             // 曲がり角ごとに情報を取得.
             self.steps = route.steps
+            // はじめの曲がり角の情報を取得する.
+            let firstStep = route.steps[0]
+            print("\(firstStep.distance)m")
+            print("\(firstStep.instructions)")
             for i in 0 ..< route.steps.count {
                 let step = route.steps[i]
-                print(step.instructions)
-                print(step.distance)
+                print("\(step.distance)m")
+                print("\(step.instructions)")
             }
             // mapViewにルートを描画.
             self.myMapView.add(route.polyline)
         }
         self.stepCounter += 1
         self.view.addSubview(myMapView)
-    }
-    
-    // Regionが変更された時に呼び出されるメソッド.
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("regionDidChangeAnimated")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        var statusStr = ""
-        switch status {
-        case .notDetermined, .denied, .restricted:
-            statusStr = "NG"
-            setMap(lat: 35.681167, lon: 139.767052) // default location (Tokyo)
-        case .authorizedAlways: fallthrough
-        case .authorizedWhenInUse:
-            statusStr = "OK"
-            break
-        }
-        print("AuthorizationStatus: \(statusStr)")
     }
     
     /*
@@ -217,6 +175,21 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         myMapView.addAnnotation(destinationPin)
         // ルートを表示
         createRoute()
+    }
+    
+    @IBAction func tapSearchAddressBtn(_ sender: Any) {
+        let searchController = UISearchController(searchResultsController: searchResultController)
+        searchController.searchBar.delegate = self
+        self.present(searchController, animated:true, completion: nil)
+    }
+    
+}
+
+extension ViewController: MKMapViewDelegate {
+
+    // Regionが変更された時に呼び出されるメソッド.
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        print("regionDidChangeAnimated")
     }
     
     /*
@@ -250,12 +223,73 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         return routeRenderer
     }
     
-    @IBAction func tapSearchAddressBtn(_ sender: Any) {
-        let searchController = UISearchController(searchResultsController: searchResultController)
-        searchController.searchBar.delegate = self
-        self.present(searchController, animated:true, completion: nil)
+}
+extension ViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        var statusStr = ""
+        switch status {
+        case .notDetermined, .denied, .restricted:
+            statusStr = "NG"
+            setMap(lat: 35.681167, lon: 139.767052) // default location (Tokyo)
+        case .authorizedAlways: fallthrough
+        case .authorizedWhenInUse:
+            statusStr = "OK"
+            break
+        }
+        print("AuthorizationStatus: \(statusStr)")
     }
     
+    // GPSから値を取得した際に呼び出されるメソッド.
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.currentLat = locations.first!.coordinate.latitude
+        self.currentLon = locations.first!.coordinate.longitude
+        setMap(lat: currentLat, lon: currentLon)
+        self.myMapView.userTrackingMode = .followWithHeading
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("Entered route")
+        stepCounter += 1
+        if stepCounter < steps.count {
+            let currentStep = steps[stepCounter]
+            let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
+            print(message)
+        } else {
+            // 目的地に到達した時.
+            let message = "Arrived at destination"
+            print(message)
+            stepCounter = 0
+            // stop monitoring
+            myLocationManager.monitoredRegions.forEach(
+                { self.myLocationManager.stopMonitoring(for: $0) }
+            )
+            // annotations
+            self.myMapView.removeAnnotations(myMapView.annotations)
+        }
+    }
+    
+    
+}
+
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let placeClient = GMSPlacesClient()
+        placeClient.autocompleteQuery(searchText, bounds: nil, filter: nil) { (results, error: Error?) -> Void in
+            print("Error @%",Error.self)
+            self.resultsArray.removeAll()
+            if results == nil { return }
+            for result in results! {
+                if let result = result as? GMSAutocompletePrediction {
+                    self.resultsArray.append(result.attributedFullText.string)
+                }
+            }
+            self.searchResultController.reloadDataWithArray(self.resultsArray)
+        }
+    }
+}
+
+extension ViewController: LocateOnTheMap {
     func locateWithLongitude(_ lon: Double, resultLat lat: Double, resultTitle title: String) {
         DispatchQueue.main.async { () -> Void in
             self.setMap(lat: lat, lon: lon)
@@ -272,21 +306,4 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             self.createRoute()
         }
     }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let placeClient = GMSPlacesClient()
-        placeClient.autocompleteQuery(searchText, bounds: nil, filter: nil) { (results, error: Error?) -> Void in
-            print("Error @%",Error.self)
-            self.resultsArray.removeAll()
-            if results == nil { return }
-            for result in results! {
-                if let result = result as? GMSAutocompletePrediction {
-                    self.resultsArray.append(result.attributedFullText.string)
-                }
-            }
-            self.searchResultController.reloadDataWithArray(self.resultsArray)
-        }
-    }
-    
 }
-
