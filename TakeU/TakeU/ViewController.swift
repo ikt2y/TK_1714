@@ -213,6 +213,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func locateWithLongitude(_ lon: Double, resultLat lat: Double, resultTitle title: String) {
         DispatchQueue.main.async { () -> Void in
             self.setMap(lat: lat, lon: lon)
+            let destinationPin: MKPointAnnotation = MKPointAnnotation()
+            destinationPin.coordinate.latitude = lat
+            destinationPin.coordinate.longitude = lon
+            // 目的地の緯度経度を設定
+            self.destinationLat = lat
+            self.destinationLon = lon
+            destinationPin.title = title
+            // MapViewにピンを追加.
+            self.myMapView.addAnnotation(destinationPin)
+            // ルートを表示
+            self.createRoute()
         }
     }
     
