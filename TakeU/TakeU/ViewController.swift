@@ -15,10 +15,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     // MapView.
     var myMapView : MKMapView!
     var myLocationManager: CLLocationManager!
-    var currentLat: Double = Double()
-    var currentLon: Double = Double()
-    var destinationLat: Double = Double()
-    var destinationLon: Double = Double()
+    
+    // current location
+    var currentLat: CLLocationDegrees = CLLocationDegrees()
+    var currentLon: CLLocationDegrees = CLLocationDegrees()
+    
+    // destination location
+    var destinationLat: CLLocationDegrees = CLLocationDegrees()
+    var destinationLon: CLLocationDegrees = CLLocationDegrees()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,24 +61,66 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let myLat: CLLocationDegrees = lat
         let myLon: CLLocationDegrees = lon
         let myCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2DMake(myLat, myLon)
+        
         // 縮尺.
         let myLatDist : CLLocationDistance = 100
         let myLonDist : CLLocationDistance = 100
-        // Regionを作成.
-        let myRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(myCoordinate, myLatDist, myLonDist);
+        
         // MapViewの生成&表示.
         myMapView = MKMapView()
         myMapView.showsUserLocation = true
         myMapView.frame = self.view.bounds
         myMapView.delegate = self
-        self.view.addSubview(myMapView)
-        // MapViewに反映.
+        // Regionを作成.
+        let myRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(myCoordinate, myLatDist, myLonDist);
         myMapView.setRegion(myRegion, animated: true)
-        
+        self.view.addSubview(myMapView)
+        // 長押しでタップするときにピンを落とす設定
         let myLongPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
         myLongPress.addTarget(self, action: #selector(self.recognizeLongPress(sender:)))
         // MapViewにUIGestureRecognizerを追加.
         myMapView.addGestureRecognizer(myLongPress)
+    }
+    
+    func createRoute() {
+        // 地図の中心を出発点と目的地の中間に設定.
+        let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake((currentLat + destinationLat)/2, (currentLon + destinationLon)/2)
+        myMapView.setCenter(center, animated: true)
+        // 縮尺を指定.
+        let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+        let myRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, span: mySpan)
+        // regionをmapViewにセット.
+        myMapView.region = myRegion
+        // PlaceMarkを生成して出発点、目的地の座標をセット.
+        let currentCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2DMake(self.currentLat, self.currentLon)
+        let destinationCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2DMake(self.destinationLat, self.destinationLon)
+        let fromPlace: MKPlacemark = MKPlacemark(coordinate: currentCoordinate, addressDictionary: nil)
+        let toPlace: MKPlacemark = MKPlacemark(coordinate: destinationCoordinate, addressDictionary: nil)
+        // Itemを生成してPlaceMarkをセット.
+        let fromItem: MKMapItem = MKMapItem(placemark: fromPlace)
+        let toItem: MKMapItem = MKMapItem(placemark: toPlace)
+        // MKDirectionsRequestを生成.
+        let myRequest: MKDirectionsRequest = MKDirectionsRequest()
+        // 出発地のItemをセット.
+        myRequest.source = fromItem
+        // 目的地のItemをセット.
+        myRequest.destination = toItem
+        // 複数経路の検索を有効.
+        myRequest.requestsAlternateRoutes = true
+        // 移動手段を徒歩に設定.
+        myRequest.transportType = MKDirectionsTransportType.walking
+        // MKDirectionsを生成してRequestをセット.
+        let myDirections: MKDirections = MKDirections(request: myRequest)
+        // 経路探索.
+        myDirections.calculate { (response, error) in
+            if error != nil || response!.routes.isEmpty {
+                return
+            }
+            let route: MKRoute = response!.routes[0] as MKRoute
+            // mapViewにルートを描画.
+            self.myMapView.add(route.polyline)
+        }
+        self.view.addSubview(myMapView)
     }
     
     // Regionが変更された時に呼び出されるメソッド.
@@ -103,8 +149,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // 長押しの最中に何度もピンを生成しないようにする.
         if sender.state != UIGestureRecognizerState.began { return }
         let location = sender.location(in: myMapView)
-        
-        // #TODO: destinationLat, destinationLonにそれぞれ代入する
         let myCoordinate: CLLocationCoordinate2D = myMapView.convert(location, toCoordinateFrom: myMapView)
         let destinationPin: MKPointAnnotation = MKPointAnnotation()
         destinationPin.coordinate = myCoordinate
@@ -115,18 +159,18 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.destinationLon = destinationPin.coordinate.longitude
         // MapViewにピンを追加.
         myMapView.addAnnotation(destinationPin)
+        // ルートを表示
+        createRoute()
     }
     
     /*
      addAnnotationした際に呼ばれるデリゲートメソッド.
      */
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
         // 目的地は2つ以上つくれない
         if self.myMapView.annotations.count > 1 {
             self.myMapView.removeAnnotations(myMapView.annotations)
         }
-        
         // 現在地アノテーションの表示
         if annotation as? MKUserLocation == mapView.userLocation { return nil }
         // 目的地アノテーションの表示
@@ -137,5 +181,16 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         destinationPinView.annotation = annotation
         destinationPinView.isDraggable = true
         return destinationPinView
+    }
+    
+    // ルートの表示設定.
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let route: MKPolyline = overlay as! MKPolyline
+        let routeRenderer: MKPolylineRenderer = MKPolylineRenderer(polyline: route)
+        // ルートの線の太さ.
+        routeRenderer.lineWidth = 3.0
+        // ルートの線の色.
+        routeRenderer.strokeColor = UIColor.red
+        return routeRenderer
     }
 }
