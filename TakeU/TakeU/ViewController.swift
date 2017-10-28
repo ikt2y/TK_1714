@@ -101,28 +101,36 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // 長押しの最中に何度もピンを生成しないようにする.
         if sender.state != UIGestureRecognizerState.began { return }
         let location = sender.location(in: myMapView)
+        
+        // #TODO: destinationLat, destinationLonにそれぞれ代入する
         let myCoordinate: CLLocationCoordinate2D = myMapView.convert(location, toCoordinateFrom: myMapView)
-        let myPin: MKPointAnnotation = MKPointAnnotation()
-        myPin.coordinate = myCoordinate
-        myPin.title = "タイトル"
-        myPin.subtitle = "サブタイトル"
+        let destinationPin: MKPointAnnotation = MKPointAnnotation()
+        destinationPin.coordinate = myCoordinate
+        destinationPin.title = "タイトル"
+        destinationPin.subtitle = "サブタイトル"
         // MapViewにピンを追加.
-        myMapView.addAnnotation(myPin)
+        myMapView.addAnnotation(destinationPin)
     }
     
     /*
      addAnnotationした際に呼ばれるデリゲートメソッド.
      */
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        // 目的地は2つ以上つくれない
+        if self.myMapView.annotations.count > 1 {
+            self.myMapView.removeAnnotations(myMapView.annotations)
+        }
+        
         // 現在地アノテーションの表示
         if annotation as? MKUserLocation == mapView.userLocation { return nil }
         // 目的地アノテーションの表示
-        let myPinIdentifier = "PinAnnotationIdentifier"
-        let myPinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: myPinIdentifier)
-        myPinView.animatesDrop = true
-        myPinView.canShowCallout = true
-        myPinView.annotation = annotation
-        myPinView.isDraggable = true
-        return myPinView
+        let destinationPinIdentifier = "PinAnnotationIdentifier"
+        let destinationPinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: destinationPinIdentifier)
+        destinationPinView.animatesDrop = true
+        destinationPinView.canShowCallout = true
+        destinationPinView.annotation = annotation
+        destinationPinView.isDraggable = true
+        return destinationPinView
     }
 }
