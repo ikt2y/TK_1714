@@ -5,7 +5,6 @@
 //  Created by ikt2y on 2017/10/28.
 //  Copyright © 2017年 shibugame. All rights reserved.
 //
-
 import UIKit
 import MapKit
 import CoreLocation

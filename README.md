@@ -1,7 +1,8 @@
-# Cycling Map
+# TakeU
 ### tk_1714
 
-[![Product Name](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
+[![TakeU](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
+
 
 
 ## 製品概要
@@ -12,7 +13,7 @@
 - 旅行が趣味→新しい土地を歩くことが多い→スマホでマップを確認することが多い
     -  安全性：治安が悪い場所でスマホに集中するのは危ないと感じた
     - よりよい旅行体験：もっと街を見ながら歩きたい
-    
+
 #### 着目した顧客
 - 地図を見ながら歩きスマホする人々
 

@@ -41,9 +41,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>現在地が地図に表示や経路検索などのために常に位置情報を使います</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>現在地が地図に表示や経路検索などのためにアプリ使用中に位置情報を使います</string>
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>現在地が地図に表示や経路検索などのために常に位置情報を使います</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>現在地が地図に表示や経路検索などのためにアプリ使用中に位置情報を使います</string>
 </dict>
 </plist>
