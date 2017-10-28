@@ -66,6 +66,27 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         setMap(lat: self.currentLat, lon: self.currentLon)
     }
     
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("Entered route")
+        stepCounter += 1
+        if stepCounter < steps.count {
+            let currentStep = steps[stepCounter]
+            let message = "In \(currentStep.distance) meters, \(currentStep.instructions)"
+            print(message)
+        } else {
+            // 目的地に到達した時.
+            let message = "Arrived at destination"
+            print(message)
+            stepCounter = 0
+            // stop monitoring
+            myLocationManager.monitoredRegions.forEach(
+                { self.myLocationManager.stopMonitoring(for: $0) }
+            )
+            // annotations
+            self.myMapView.removeAnnotations(myMapView.annotations)
+        }
+    }
+    
     func setMap(lat: Double, lon: Double) {
         // 中心点の緯度経度.
         let myLat: CLLocationDegrees = lat
@@ -82,6 +103,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         myMapView.userTrackingMode = .followWithHeading
         myMapView.frame = self.view.bounds
         myMapView.delegate = self
+        
         // Regionを作成.
         let myRegion: MKCoordinateRegion = MKCoordinateRegionMakeWithDistance(myCoordinate, myLatDist, myLonDist);
         myMapView.setRegion(myRegion, animated: true)
@@ -140,11 +162,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 print(step.instructions)
                 print(step.distance)
             }
-            
             // mapViewにルートを描画.
             self.myMapView.add(route.polyline)
         }
-        
+        self.stepCounter += 1
         self.view.addSubview(myMapView)
     }
     
