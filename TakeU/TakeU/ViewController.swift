@@ -68,6 +68,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.view.addSubview(myMapView)
         // MapViewに反映.
         myMapView.setRegion(myRegion, animated: true)
+        
+        let myLongPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+        myLongPress.addTarget(self, action: #selector(self.recognizeLongPress(sender:)))
+        // MapViewにUIGestureRecognizerを追加.
+        myMapView.addGestureRecognizer(myLongPress)
     }
     
     // Regionが変更された時に呼び出されるメソッド.
@@ -87,5 +92,37 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             break
         }
         print("AuthorizationStatus: \(statusStr)")
+    }
+    
+    /*
+     長押しを感知した際に呼ばれるメソッド.
+     */
+    @objc func recognizeLongPress(sender: UILongPressGestureRecognizer) {
+        // 長押しの最中に何度もピンを生成しないようにする.
+        if sender.state != UIGestureRecognizerState.began { return }
+        let location = sender.location(in: myMapView)
+        let myCoordinate: CLLocationCoordinate2D = myMapView.convert(location, toCoordinateFrom: myMapView)
+        let myPin: MKPointAnnotation = MKPointAnnotation()
+        myPin.coordinate = myCoordinate
+        myPin.title = "タイトル"
+        myPin.subtitle = "サブタイトル"
+        // MapViewにピンを追加.
+        myMapView.addAnnotation(myPin)
+    }
+    
+    /*
+     addAnnotationした際に呼ばれるデリゲートメソッド.
+     */
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        // 現在地アノテーションの表示
+        if annotation as? MKUserLocation == mapView.userLocation { return nil }
+        // 目的地アノテーションの表示
+        let myPinIdentifier = "PinAnnotationIdentifier"
+        let myPinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: myPinIdentifier)
+        myPinView.animatesDrop = true
+        myPinView.canShowCallout = true
+        myPinView.annotation = annotation
+        myPinView.isDraggable = true
+        return myPinView
     }
 }
