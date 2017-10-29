@@ -21,6 +21,7 @@ let LongRight = "abcdR"
 let ShortLeft = "abcdl"
 let LongLeft = "abcdL"
 let AfterCreateRoute = "abcds"
+let GoleSign = "abcdg"
 
 
 class ViewController: UIViewController {
@@ -332,6 +333,8 @@ extension ViewController: CLLocationManagerDelegate {
             let alert = UIAlertController(title:"到着！", message: "目的地に到着しました", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             self.present(alert, animated: true, completion: nil)
+            // バイブレーション
+            self.writeValueToPeripheral(GoleSign)
             
             // 一度リセット.
             stepCounter = 0
