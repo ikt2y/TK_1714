@@ -1,8 +1,7 @@
 # TakeU
 ### tk_1714
 
-[![TakeU](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
-
+[![https://gyazo.com/b5cf1973ebdd09e7fc1d69baae456d12](https://i.gyazo.com/b5cf1973ebdd09e7fc1d69baae456d12.png)](https://gyazo.com/b5cf1973ebdd09e7fc1d69baae456d12)(https://www.youtube.com/watch?v=M-oKQlGpmaY)
 ## 製品概要
 ### 道案内 X Tech
 
