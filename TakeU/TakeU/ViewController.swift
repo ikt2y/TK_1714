@@ -152,7 +152,7 @@ class ViewController: UIViewController {
                 print("\(step.instructions)")
                 // 観測領域を生成.
                 let region = CLCircularRegion(center: step.polyline.coordinate,
-                                              radius: 20,
+                                              radius: 10,
                                               identifier: "\(i)")
                 // 観測開始.
                 self.myLocationManager.startMonitoring(for: region)
