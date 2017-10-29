@@ -12,6 +12,8 @@ import GooglePlaces
 
 class ViewController: UIViewController {
     
+    var timer: Timer!
+    
     // MapView.
     var myMapView : MKMapView!
     var myLocationManager: CLLocationManager!
@@ -52,9 +54,9 @@ class ViewController: UIViewController {
         
         // Location privacy setting.
         let status = CLLocationManager.authorizationStatus()
-        if(status != CLAuthorizationStatus.authorizedWhenInUse) {
+        if(status != CLAuthorizationStatus.authorizedAlways) {
             print("not determined")
-            myLocationManager.requestWhenInUseAuthorization()
+            myLocationManager.requestAlwaysAuthorization()
         }
         // Setting location accuracy
         myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -195,11 +197,6 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: MKMapViewDelegate {
-
-    // Regionが変更された時に呼び出されるメソッド.
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("regionDidChangeAnimated")
-    }
     
     /*
      addAnnotationした際に呼ばれるデリゲートメソッド.
@@ -250,11 +247,10 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         var statusStr = ""
         switch status {
-        case .notDetermined, .denied, .restricted:
+        case .notDetermined, .denied, .restricted, .authorizedWhenInUse:
             statusStr = "NG"
             setMap(lat: 35.681167, lon: 139.767052) // default location (Tokyo)
-        case .authorizedAlways: fallthrough
-        case .authorizedWhenInUse:
+        case .authorizedAlways:
             statusStr = "OK"
             break
         }
@@ -266,20 +262,27 @@ extension ViewController: CLLocationManagerDelegate {
         self.currentLat = locations.first!.coordinate.latitude
         self.currentLon = locations.first!.coordinate.longitude
         setMap(lat: currentLat, lon: currentLon)
-        
+        myLocationManager.stopUpdatingLocation()
+        self.myMapView.userTrackingMode = .followWithHeading
     }
     
     // 観測領域に入った際に呼ばれるメソッド.
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("Entered route")
+        // アラートを作成.
+        let alert = UIAlertController(title:"Enter！", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
         stepCounter += 1
         if stepCounter < steps.count {
             let currentStep = steps[stepCounter]
-            var isRight: Bool
+            var direction_text : String
             if currentStep.instructions.contains("右") {
-                isRight = true
+                direction_text = "right"
+                send_direction(direction_text: direction_text)
             } else if currentStep.instructions.contains("左") {
-                isRight = false
+                direction_text = "left"
+                send_direction(direction_text: direction_text)
             } else { return }
             myLocationManager.startUpdatingLocation()
         } else {
@@ -300,6 +303,18 @@ extension ViewController: CLLocationManagerDelegate {
             self.myMapView.removeOverlays(myMapView.overlays)
             
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        // アラートを作成.
+        let alert = UIAlertController(title:"Exit！", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    // Blutoothで送信
+    func send_direction(direction_text: String){
+        
     }
     
 }
