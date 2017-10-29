@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E1707821FA5773700D18EE0 /* fullscreen_iphone5SE.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E1707811FA5773700D18EE0 /* fullscreen_iphone5SE.png */; };
 		3E1707841FA578D000D18EE0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1707831FA578D000D18EE0 /* Images.xcassets */; };
+		3E17078B1FA5831000D18EE0 /* fullscreen_iphone5SE.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E1707891FA5830F00D18EE0 /* fullscreen_iphone5SE.png */; };
+		3E17078C1FA5831000D18EE0 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E17078A1FA5830F00D18EE0 /* icon.png */; };
 		3E599E0D1FA4300700E9B82C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E599E0C1FA4300700E9B82C /* AppDelegate.swift */; };
 		3E599E0F1FA4300700E9B82C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E599E0E1FA4300700E9B82C /* ViewController.swift */; };
 		3E599E121FA4300700E9B82C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E599E101FA4300700E9B82C /* Main.storyboard */; };
 		3E599E141FA4300700E9B82C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E599E131FA4300700E9B82C /* Assets.xcassets */; };
 		3E599E171FA4300700E9B82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E599E151FA4300700E9B82C /* LaunchScreen.storyboard */; };
 		3E82C5421FA4CCCA00296CFC /* SearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E82C5411FA4CCCA00296CFC /* SearchResultsController.swift */; };
-		3EAF6D531FA5344300EA8AB6 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EAF6D521FA5344300EA8AB6 /* icon.png */; };
 		3EAF6D551FA5391900EA8AB6 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EAF6D541FA5391900EA8AB6 /* MapKit.framework */; };
 		FAA4E72FB7C2037D1963ABD8 /* Pods_TakeU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB6A8E7458EB153896980F1 /* Pods_TakeU.framework */; };
 /* End PBXBuildFile section */
@@ -23,8 +23,9 @@
 /* Begin PBXFileReference section */
 		18680999CFC022CAF43D1903 /* Pods-TakeU.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TakeU.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TakeU/Pods-TakeU.debug.xcconfig"; sourceTree = "<group>"; };
 		3DB6A8E7458EB153896980F1 /* Pods_TakeU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TakeU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E1707811FA5773700D18EE0 /* fullscreen_iphone5SE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fullscreen_iphone5SE.png; path = ../../../../../Downloads/fullscreen_iphone5SE.png; sourceTree = "<group>"; };
 		3E1707831FA578D000D18EE0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		3E1707891FA5830F00D18EE0 /* fullscreen_iphone5SE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fullscreen_iphone5SE.png; path = ../../../../../Downloads/fullscreen_iphone5SE.png; sourceTree = "<group>"; };
+		3E17078A1FA5830F00D18EE0 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../../../../Downloads/icon.png; sourceTree = "<group>"; };
 		3E599E091FA4300700E9B82C /* TakeU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TakeU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E599E0C1FA4300700E9B82C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3E599E0E1FA4300700E9B82C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -33,7 +34,6 @@
 		3E599E161FA4300700E9B82C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3E599E181FA4300700E9B82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3E82C5411FA4CCCA00296CFC /* SearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsController.swift; sourceTree = "<group>"; };
-		3EAF6D521FA5344300EA8AB6 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../../../../Downloads/icon.png; sourceTree = "<group>"; };
 		3EAF6D541FA5391900EA8AB6 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		85E51600DA6E2B32A7E4CD9E /* Pods-TakeU.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TakeU.release.xcconfig"; path = "Pods/Target Support Files/Pods-TakeU/Pods-TakeU.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,8 +90,8 @@
 		3E599E0B1FA4300700E9B82C /* TakeU */ = {
 			isa = PBXGroup;
 			children = (
-				3E1707811FA5773700D18EE0 /* fullscreen_iphone5SE.png */,
-				3EAF6D521FA5344300EA8AB6 /* icon.png */,
+				3E1707891FA5830F00D18EE0 /* fullscreen_iphone5SE.png */,
+				3E17078A1FA5830F00D18EE0 /* icon.png */,
 				3E599E0C1FA4300700E9B82C /* AppDelegate.swift */,
 				3E599E0E1FA4300700E9B82C /* ViewController.swift */,
 				3E599E101FA4300700E9B82C /* Main.storyboard */,
@@ -171,11 +171,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EAF6D531FA5344300EA8AB6 /* icon.png in Resources */,
 				3E599E171FA4300700E9B82C /* LaunchScreen.storyboard in Resources */,
 				3E599E141FA4300700E9B82C /* Assets.xcassets in Resources */,
 				3E1707841FA578D000D18EE0 /* Images.xcassets in Resources */,
-				3E1707821FA5773700D18EE0 /* fullscreen_iphone5SE.png in Resources */,
+				3E17078B1FA5831000D18EE0 /* fullscreen_iphone5SE.png in Resources */,
+				3E17078C1FA5831000D18EE0 /* icon.png in Resources */,
 				3E599E121FA4300700E9B82C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
