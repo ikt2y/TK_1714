@@ -4,7 +4,7 @@
 [![TakeU](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
 
 ## 製品概要
-### 地図を見ながらの歩きスマホ X Tech
+### 地図アプリを見ながらの歩きスマホ X Tech
 
 ### 背景（製品開発のきっかけ、課題等）
 #### プロダクトの開発に至った背景
