@@ -4,7 +4,7 @@
 [![TakeU](https://raw.github.com/GabLeRoux/WebMole/master/ressources/WebMole_Youtube_Video.png)](https://www.youtube.com/channel/UC4PtjOfZTbVp9DwtJv82Lzg)
 
 ## 製品概要
-### 地図を見ながらの歩きスマホ X Tech
+### 地図アプリを見ながらの歩きスマホ X Tech
 
 ### 背景（製品開発のきっかけ、課題等）
 #### プロダクトの開発に至った背景
@@ -16,7 +16,7 @@
     - 手に荷物を持っている時は使えない
 
 #### 着目した顧客
-- 地図（アプリ）を見ながら歩くことに危険やストレスを感じている人たち
+- 地図アプリを見ながら歩くことに危険やストレスを感じている人たち
 
 #### 顧客の課題
 - 歩きスマホによる前方不注意

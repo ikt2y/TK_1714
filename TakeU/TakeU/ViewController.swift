@@ -9,6 +9,18 @@ import UIKit
 import MapKit
 import CoreLocation
 import GooglePlaces
+import CoreBluetooth
+
+// bluetooth接続に使用
+let PeripheralName = "IMBLE042C"
+let CharacteristicProperties = 0xA
+let ServiceUUID = CBUUID(string:"ADA99A7F-888B-4E9F-8080-07DDC240F3CE")
+let CharacteristicUUID = CBUUID(string:"ADA99A7F-888B-4E9F-8082-07DDC240F3CE")
+let ShortRight = "abcdr"
+let LongRight = "abcdR"
+let ShortLeft = "abcdl"
+let LongLeft = "abcdL"
+
 
 class ViewController: UIViewController {
     
@@ -34,11 +46,17 @@ class ViewController: UIViewController {
     var destinationLat: CLLocationDegrees = CLLocationDegrees()
     var destinationLon: CLLocationDegrees = CLLocationDegrees()
     
+    // bluetooth
+    var centralManager: CBCentralManager!
+    var peripheral: CBPeripheral!
+    private var characteristicArray = [CBCharacteristic]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLocationManager()
         searchResultController = SearchResultsController()
         searchResultController.delegate = self
+        startConnectPeripheral() // bluetooth connect
     }
     
     @objc func update() {
@@ -194,6 +212,26 @@ class ViewController: UIViewController {
         self.present(searchController, animated:true, completion: nil)
     }
     
+    // bluetooth
+    
+    // 接続開始メソッド
+    func startConnectPeripheral() {
+        // CBCentralManagerの初期化
+        self.centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
+    }
+    
+    // 接続切断メソッド
+    func startDisconnectPeripheral() {
+        centralManager.cancelPeripheralConnection(peripheral)
+    }
+    
+    // ペリフェラルへの書き込みメソッド
+    func writeValueToPeripheral(_ submitData: String){
+        peripheral.writeValue(submitData.data(using: String.Encoding.ascii)!,
+                              for: characteristicArray.last!,
+                              type: CBCharacteristicWriteType.withResponse)
+    }
+    
 }
 
 extension ViewController: MKMapViewDelegate {
@@ -276,13 +314,12 @@ extension ViewController: CLLocationManagerDelegate {
         stepCounter += 1
         if stepCounter < steps.count {
             let currentStep = steps[stepCounter]
-            var direction_text : String
             if currentStep.instructions.contains("右") {
-                direction_text = "right"
-                send_direction(direction_text: direction_text)
+                // bluetooth write
+                writeValueToPeripheral(ShortRight)
             } else if currentStep.instructions.contains("左") {
-                direction_text = "left"
-                send_direction(direction_text: direction_text)
+                // bluetooth write
+                writeValueToPeripheral(ShortLeft)
             } else { return }
             myLocationManager.startUpdatingLocation()
         } else {
@@ -310,11 +347,6 @@ extension ViewController: CLLocationManagerDelegate {
         let alert = UIAlertController(title:"Exit！", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alert, animated: true, completion: nil)
-    }
-    
-    // Blutoothで送信
-    func send_direction(direction_text: String){
-        
     }
     
 }
@@ -354,3 +386,154 @@ extension ViewController: LocateOnTheMap {
         }
     }
 }
+
+// bluetooth controller
+
+// //  Created by Rentaro Igari on 2017/10/28.
+
+
+extension ViewController: CBCentralManagerDelegate, CBPeripheralDelegate {
+    
+    //====================================================
+    //       CBCentralの状態が変化した時に呼ばれるメソッド.
+    //====================================================
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        // ログ出力.
+        print("state: \(central.state)")
+        
+        // CBCentralがPoweredONの時にスキャン開始.
+        switch (central.state) {
+            
+        case .unknown:
+            print("BLE Unknown")
+        case .resetting:
+            print("BLE Resetting")
+        case .unsupported:
+            print("BLE Unsupported")
+        case .unauthorized:
+            print("BLE Unauthorized")
+        case .poweredOff:
+            print("BLE PoweredOff")
+        case .poweredOn:
+            print("BLE PoweredOn")
+            central.scanForPeripherals(withServices: nil, options: nil)
+        }
+        
+    }
+    
+    
+    
+    //=========================================================
+    //                 スキャン結果を受け取る.
+    //=========================================================
+    func centralManager(_ central: CBCentralManager,
+                        didDiscover peripheral: CBPeripheral,
+                        advertisementData: [String : Any],
+                        rssi RSSI: NSNumber)
+    {
+        // takeUを検出する.
+        if(peripheral.name == PeripheralName) {
+            print("detection success")
+            self.peripheral = peripheral
+            
+            // スキャン停止
+            self.centralManager.stopScan()
+            
+            // takeUと接続する
+            self.centralManager.connect(self.peripheral, options: nil)
+            
+        }
+        
+    }
+    
+    
+    //==========================================================================================
+    //                                   接続時呼ばれるメソッド
+    //==========================================================================================
+    
+    // 成功時
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("Connection success!")
+        
+        // delegateをセット
+        peripheral.delegate = self;
+        
+        // サービス探索
+        peripheral.discoverServices([ServiceUUID])
+    }
+    
+    // 失敗時
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        print("Connection failed...")
+    }
+    
+    
+    //==============================================================
+    //        サービス探索結果を受け取り、キャラクタリスティックを探索
+    //===============================================================
+    
+    // サービス探査後に呼ばれるメソッド
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard let services = peripheral.services else{
+            print("error")
+            return
+        }
+        print(services)
+        print("service detection success!")
+        for obj in services {
+            if let service = obj as? CBService {
+                
+                // キャラクタリスティック探索
+                peripheral.discoverCharacteristics(
+                    [CharacteristicUUID], for: service)
+            }
+        }
+    }
+    
+    
+    //=========================================================
+    //           キャラクタリスティックを受け取る
+    //=========================================================
+    
+    // キャラクタリスティック探査後に呼ばれるメソッド
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        if let characteristics = service.characteristics {
+            print("\(characteristics)")
+            
+            print("character detection success!")
+            // 書き込み用キャラクタリスティックを保存
+            for characteristic in characteristics {
+                if(Int(characteristic.properties.rawValue) == CharacteristicProperties) {
+                    print(characteristic)
+                    self.characteristicArray.append(characteristic as CBCharacteristic)
+                }
+            }
+        }
+        print("---------------------------------")
+    }
+    
+    
+    //===============================================
+    //         書き込み後に実行されるメソッド
+    //===============================================
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        print("write sccess!!")
+    }
+    
+    
+    
+    //===============================================
+    //          接続切断時に呼び出されるメソッド
+    //===============================================
+    
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        print("disconnect peripheral")
+        print("==================================")
+    }
+    
+}
+
+
+
