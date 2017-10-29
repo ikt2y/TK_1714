@@ -20,6 +20,7 @@ let ShortRight = "abcdr"
 let LongRight = "abcdR"
 let ShortLeft = "abcdl"
 let LongLeft = "abcdL"
+let AfterCreateRoute = "abcds"
 
 
 class ViewController: UIViewController {
@@ -204,6 +205,9 @@ class ViewController: UIViewController {
         myMapView.addAnnotation(destinationPin)
         // ルートを表示
         createRoute()
+        // バイブレーション
+        writeValueToPeripheral(AfterCreateRoute)
+        
     }
     
     @IBAction func tapSearchAddressBtn(_ sender: Any) {
@@ -383,6 +387,8 @@ extension ViewController: LocateOnTheMap {
             self.myMapView.addAnnotation(destinationPin)
             // ルートを表示
             self.createRoute()
+            // バイブレーション
+            self.writeValueToPeripheral(AfterCreateRoute)
         }
     }
 }
