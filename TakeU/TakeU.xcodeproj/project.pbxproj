@@ -17,6 +17,7 @@
 		3E599E171FA4300700E9B82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E599E151FA4300700E9B82C /* LaunchScreen.storyboard */; };
 		3E82C5421FA4CCCA00296CFC /* SearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E82C5411FA4CCCA00296CFC /* SearchResultsController.swift */; };
 		3EAF6D551FA5391900EA8AB6 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EAF6D541FA5391900EA8AB6 /* MapKit.framework */; };
+		3ED41D5E1FA70BEE004F583C /* WithoutBLEViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED41D5D1FA70BEE004F583C /* WithoutBLEViewController.swift */; };
 		FAA4E72FB7C2037D1963ABD8 /* Pods_TakeU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB6A8E7458EB153896980F1 /* Pods_TakeU.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		3E599E181FA4300700E9B82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3E82C5411FA4CCCA00296CFC /* SearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsController.swift; sourceTree = "<group>"; };
 		3EAF6D541FA5391900EA8AB6 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		3ED41D5D1FA70BEE004F583C /* WithoutBLEViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithoutBLEViewController.swift; sourceTree = "<group>"; };
 		85E51600DA6E2B32A7E4CD9E /* Pods-TakeU.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TakeU.release.xcconfig"; path = "Pods/Target Support Files/Pods-TakeU/Pods-TakeU.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,6 +102,7 @@
 				3E599E181FA4300700E9B82C /* Info.plist */,
 				3E82C5411FA4CCCA00296CFC /* SearchResultsController.swift */,
 				3E1707831FA578D000D18EE0 /* Images.xcassets */,
+				3ED41D5D1FA70BEE004F583C /* WithoutBLEViewController.swift */,
 			);
 			path = TakeU;
 			sourceTree = "<group>";
@@ -238,6 +241,7 @@
 				3E82C5421FA4CCCA00296CFC /* SearchResultsController.swift in Sources */,
 				3E599E0F1FA4300700E9B82C /* ViewController.swift in Sources */,
 				3E599E0D1FA4300700E9B82C /* AppDelegate.swift in Sources */,
+				3ED41D5E1FA70BEE004F583C /* WithoutBLEViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
